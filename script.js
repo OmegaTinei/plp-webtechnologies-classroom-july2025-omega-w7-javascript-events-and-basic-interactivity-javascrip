@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Part 2: Building Interactive Elements - Collapsible FAQ
     // ------------------------------------------------------------------
 
-    // Select all question elements in the FAQ section.
+    
     const faqQuestions = document.querySelectorAll('.faq-question');
 
     // Loop through each question to add a click event listener.
