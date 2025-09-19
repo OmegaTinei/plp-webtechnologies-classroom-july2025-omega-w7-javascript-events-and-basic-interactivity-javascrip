@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Health Informatics Portal</title>
+    <style>
+        /* * Base Styles & Typography
+         * These styles apply across all screen sizes for a consistent look.
+         */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        header, .main-layout, footer {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* * Flexbox: Navigation Bar
+         * The header and navigation use Flexbox to align content and links horizontally.
+         */
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #005f93;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .main-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .main-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        .main-nav a:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* * CSS Grid: Main Layout
+         * The main content area uses CSS Grid for a clean two-column layout.
+         */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr; /* Main content takes 2/3, sidebar takes 1/3 */
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .content-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Flexbox for Cards */
+        .card-container {
+            display: flex;
+            justify-content: space-between; /* Space out the cards */
+            flex-wrap: wrap; /* Allows cards to wrap to the next line on smaller screens */
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            flex: 1; /* Allows each card to grow and shrink evenly */
+            background-color: #eaf6ff;
+            border: 1px solid #cceeff;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 250px; /* Ensures cards don't get too small */
+        }
+
+        /* Form Styling */
+        #bmi-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        #bmi-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        #bmi-form input[type="text"],
+        #bmi-form input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #bmi-form button[type="submit"] {
+            background-color: #005f93;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        #bmi-form button[type="submit"]:hover {
+            background-color: #004d7a;
+        }
+
+        #result-area {
+            margin-top: 20px;
+            padding: 15px;
+            border-left: 4px solid #005f93;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+
+        #bmi-result-text {
+            margin: 0;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* FAQ Section Styling */
+        .faq-item {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+        }
+
+        .faq-question {
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-question.active::after {
+            content: '-';
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-top: 0;
+        }
+
+        .faq-answer.show {
+            max-height: 200px; /* Adjust as needed */
+            padding-top: 10px;
+        }
+
+        /* Footer: Uses Flexbox to center content */
+        footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 20px;
+        }
+
+        /*
+         * Responsive Web Design (RWD) with Media Queries
+         * The layout will adjust based on screen width.
+         */
+
+        /* Tablet View (max-width: 900px) */
+        @media (max-width: 900px) {
+            /* Main Grid layout changes to a single column */
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Mobile View (max-width: 600px) */
+        @media (max-width: 600px) {
+            /* Header and Navigation adjustments */
+            header {
+                padding: 15px 0;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            /* Cards now stack vertically */
+            .card-container {
+                flex-direction: column;
+            }
+
+            .main-nav {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header and Navigation: Uses Flexbox for alignment -->
+    <header>
+        <h1>Ministry of Health</h1>
+        <h2>Health Informatics Data Portal</h2>
+        <nav class="main-nav">
+            <a href="#">Dashboard</a>
+            <a href="#">Submissions</a>
+            <a href="#">Reports</a>
+            <a href="#">Help</a>
+        </nav>
+    </header>
+
+    <!-- Main Content Area: Uses CSS Grid for the two-column layout -->
+    <main class="main-layout">
+        <section class="content-section">
+            <h2>Harnessing Data for Public Health</h2>
+            <p id="greeting-message">Effective data management is crucial for informed decision-making in public health. Here, we explore key principles of data analysis and its application in strengthening health systems.</p>
+            
+            <div class="card-container">
+                <div class="card">
+                    <h3>Data Quality & Validation</h3>
+                    <p>Ensuring data is accurate, complete, and reliable is the first step. We use tools like DHIS2 to implement validation rules that catch errors at the point of entry.</p>
+                </div>
+                <div class="card">
+                    <h3>Data Visualization</h3>
+                    <p>Visualizing data through charts and maps makes complex information easy to understand, helping policymakers and health workers to quickly identify trends and outbreaks.</p>
+                </div>
+                <div class="card">
+                    <h3>Timely Reporting</h3>
+                    <p>Submitting data promptly is essential. Timely information allows for rapid response to public health events and a more agile health system.</p>
+                </div>
+            </div>
+
+            <!-- Start of Part 3: Form Validation -->
+            <hr style="margin: 20px 0;">
+            <h3>BMI Calculator</h3>
+            <p>Calculate Body Mass Index (BMI) to assess a person's nutritional status. This demonstrates form validation with JavaScript.</p>
+            <form id="bmi-form">
+                <div class="form-group">
+                    <label for="name">Your Name:</label>
+                    <input type="text" id="name" required>
+                    <p class="error-message" id="name-error"></p>
+                </div>
+                <div class="form-group">
+                    <label for="weight">Weight (kg):</label>
+                    <input type="number" id="weight" step="0.1" required>
+                    <p class="error-message" id="weight-error"></p>
+                </div>
+                <div class="form-group">
+                    <label for="height">Height (m):</label>
+                    <input type="number" id="height" step="0.01" required>
+                    <p class="error-message" id="height-error"></p>
+                </div>
+                <button type="submit">Calculate BMI</button>
+            </form>
+            <div id="result-area">
+                <p id="bmi-result-text"></p>
+            </div>
+            <!-- End of Part 3: Form Validation -->
+
+            <!-- Start of Part 2: Interactive Element (Collapsible FAQ) -->
+            <hr style="margin: 20px 0;">
+            <h3>Frequently Asked Questions</h3>
+            <div class="faq-section">
+                <div class="faq-item">
+                    <h4 class="faq-question">What is DHIS2?</h4>
+                    <p class="faq-answer">DHIS2 (District Health Information Software 2) is an open-source platform for collecting, analyzing, and disseminating data for all health programs. It's used by health ministries and NGOs worldwide.</p>
+                </div>
+                <div class="faq-item">
+                    <h4 class="faq-question">How can I improve data quality?</h4>
+                    <p class="faq-answer">To improve data quality, you should implement clear data collection protocols, conduct regular data validation checks, and provide continuous training to data entry personnel. Regular feedback loops are also crucial.</p>
+                </div>
+                <div class="faq-item">
+                    <h4 class="faq-question">Why is data security important in health informatics?</h4>
+                    <p class="faq-answer">Data security is paramount in health informatics to protect sensitive patient information. Breaches can lead to legal and ethical issues, loss of trust, and potential harm to individuals. Strong security measures, including encryption and access controls, are essential.</p>
+                </div>
+            </div>
+            <!-- End of Part 2: Interactive Element -->
+
+        </section>
+
+        <aside class="sidebar">
+            <h3>More Resources</h3>
+            <ul>
+                <li><a href="#">DHIS2 Training</a></li>
+                <li><a href="#">Data Privacy Guidelines</a></li>
+                <li><a href="#">Public Health Reports</a></li>
+            </ul>
+        </aside>
+    </main>
+
+    <!-- Footer: Uses Flexbox to center content -->
+    <footer>
+        <p>&copy; 2024 Ministry of Health. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // ------------------------------------------------------------------
+            // Part 1: Mastering JavaScript Basics - User Input and Logic
+            // ------------------------------------------------------------------
+
+            // Select the form and result elements from the DOM
+            const form = document.getElementById('bmi-form');
+            const nameInput = document.getElementById('name');
+            const weightInput = document.getElementById('weight');
+            const heightInput = document.getElementById('height');
+            const resultArea = document.getElementById('bmi-result-text');
+
+            // Select error message elements
+            const nameError = document.getElementById('name-error');
+            const weightError = document.getElementById('weight-error');
+            const heightError = document.getElementById('height-error');
+
+            // Add an event listener to the form's submit event.
+            // The 'e.preventDefault()' line prevents the page from reloading.
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Clear previous errors
+                nameError.textContent = '';
+                weightError.textContent = '';
+                heightError.textContent = '';
+                resultArea.textContent = '';
+
+                let isValid = true;
+
+                // Validate Name
+                const name = nameInput.value.trim();
+                if (name === '') {
+                    nameError.textContent = 'Name is required.';
+                    isValid = false;
+                }
+
+                // Validate Weight
+                const weight = parseFloat(weightInput.value);
+                if (isNaN(weight) || weight <= 0) {
+                    weightError.textContent = 'Please enter a valid weight (kg).';
+                    isValid = false;
+                }
+
+                // Validate Height
+                const height = parseFloat(heightInput.value);
+                if (isNaN(height) || height <= 0) {
+                    heightError.textContent = 'Please enter a valid height (m).';
+                    isValid = false;
+                }
+
+                // If any validation failed, exit the function.
+                if (!isValid) {
+                    return;
+                }
+
+                // --- Conditionals and Logical Operators ---
+                // We use an 'if-else' statement to categorize the BMI result.
+                const bmi = weight / (height * height);
+                let bmiCategory = '';
+
+                if (bmi < 18.5) {
+                    bmiCategory = 'Underweight';
+                } else if (bmi >= 18.5 && bmi <= 24.9) {
+                    bmiCategory = 'Normal Weight';
+                } else if (bmi >= 25 && bmi <= 29.9) {
+                    bmiCategory = 'Overweight';
+                } else {
+                    bmiCategory = 'Obesity';
+                }
+
+                // Display the result with the name and BMI category.
+                resultArea.textContent = `${name}, your BMI is ${bmi.toFixed(2)}. This is considered: ${bmiCategory}.`;
+                console.log(`BMI for ${name} is ${bmi.toFixed(2)}.`);
+            });
+
+            // ------------------------------------------------------------------
+            // Part 2: Building Interactive Elements - Collapsible FAQ
+            // ------------------------------------------------------------------
+
+            // Select all question elements in the FAQ section.
+            const faqQuestions = document.querySelectorAll('.faq-question');
+
+            // Loop through each question to add a click event listener.
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    // Get the corresponding answer element.
+                    const answer = question.nextElementSibling;
+                    
+                    // Toggle the 'show' class to control the visibility of the answer.
+                    // This uses CSS transitions for a smooth open/close animation.
+                    answer.classList.toggle('show');
+                    question.classList.toggle('active');
+                });
+            });
+
+
+            // ------------------------------------------------------------------
+            // Part 3: JavaScript Loops - Embracing Repetition
+            // ------------------------------------------------------------------
+
+            // An array of key data principles.
+            const dataPrinciples = [
+                "Accuracy: Verifying data against source documents.",
+                "Completeness: Ensuring all required fields are filled to avoid missing information.",
+                "Timeliness: Data must be submitted and analyzed promptly to inform immediate action.",
+                "Actionability: Transforming data into insights that lead to better health outcomes."
+            ];
+
+            // Select the unordered list element from the DOM.
+            const principlesList = document.getElementById('principles-list');
+
+            // Use a forEach loop to iterate over the dataPrinciples array.
+            // This is an elegant way to handle arrays in JavaScript.
+            if (principlesList) { // Added a check to prevent errors if the element doesn't exist
+                dataPrinciples.forEach(principle => {
+                    // Create a new list item element for each principle.
+                    const listItem = document.createElement('li');
+                    // Set the text content of the list item.
+                    listItem.textContent = principle;
+                    // Append the new list item to the list in the HTML.
+                    principlesList.appendChild(listItem);
+                });
+            }
+
+            // Example of a simple countdown loop using a while loop.
+            let countdown = 3;
+            console.log("Starting a simple countdown:");
+            while (countdown > 0) {
+                console.log(`Countdown: ${countdown}`);
+                countdown--;
+            }
+            console.log("Countdown finished!");
+
+        });
+    </script>
+
+</body>
+</html>
